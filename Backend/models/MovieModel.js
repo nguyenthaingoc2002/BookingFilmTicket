@@ -19,11 +19,17 @@ const MovieSchema = new mongoose.Schema(
       required: true,
     },
     director: {
-        type: String,
+      type: String,
     },
     actor: {
-        type: String,
-    }
+      type: String,
+    },
+    image_url: {
+      type: String,
+    },
+    trailer_url: {
+      type: String,
+    },
   },
   { timestamps: true }
 );
