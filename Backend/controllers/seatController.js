@@ -10,7 +10,10 @@ export const createSeat = (row, column, type) => {
   return newSeat;
 };
 
-export const createSeatForShow = (numberRow, numberColumn) => {
+export const createSeatForShow = async (hallID) => {
+  const hall = await Hall.findById(hallID);
+  const numberRow = hall.numberRow;
+  const numberColumn = hall.numberColumn;
   const seats = [];
   for (let x = 1; x <= numberRow; x++) {
     for (let y = 1; y <= numberColumn; y++) {
@@ -44,3 +47,7 @@ export const updateStateSeat = async (seatID, state) => {
   seat.state = state;
   seat.save();
 };
+
+export const deleteSeat = async (seatID) => {
+  await Seat.findByIdAndDelete(seatID);
+}

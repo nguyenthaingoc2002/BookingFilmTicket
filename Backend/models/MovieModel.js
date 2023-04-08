@@ -20,15 +20,19 @@ const MovieSchema = new mongoose.Schema(
     },
     director: {
       type: String,
+      required: true,
     },
     actor: {
       type: String,
+      required: true,
     },
     image_url: {
       type: String,
+      require: true
     },
     trailer_url: {
       type: String,
+      require: true
     },
   },
   { timestamps: true }
