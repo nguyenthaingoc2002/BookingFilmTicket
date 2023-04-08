@@ -27,12 +27,17 @@ export const createSeatForShow = (numberRow, numberColumn) => {
         column: y,
         type: type,
       });
+      seat.save();
       seats.push(seat);
     }
   }
   return seats;
 };
-
+export const checkAvailableSeat = async (seatID) => {
+  const seat = await Seat.findById(seatID);
+  if(seat.state) return true;
+  else return false;
+}
 
 export const updateStateSeat = async (seatID, state) => {
   const seat = await Seat.findById(seatID);

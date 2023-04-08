@@ -23,6 +23,14 @@ const BookingSchema = new mongoose.Schema(
       type: Number,
       require: true,
     },
+    state: {
+      //1->chưa thanh toán 
+      //2->đã thanh toán
+      //3->đã hoàn tiền
+      type: Number, 
+      require: true,
+      default: 1
+    },
   },
   { timestamps: true }
 );

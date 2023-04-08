@@ -68,3 +68,19 @@ export const getShowByDate = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+
+export const getShowByDateAndMovie = async (req, res) => {
+  try {
+    const from = new Date(req.params.Date);
+    const to = new Date(req.params.Date);
+    to.setDate(from.getDate() + 1);
+    const listShow = await Show.find({startTime: { $gte: from, $lte: to }, movie: req.params.movieID})
+    res.status(200).json({
+      success: true,
+      msg: "Find Show Success",
+      listShow: listShow,
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
