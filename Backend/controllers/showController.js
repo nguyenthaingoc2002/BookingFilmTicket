@@ -7,7 +7,7 @@ import mongoose from "mongoose";
 export const createShow = async (req, res) => {
   try {
     const { startTime, endTime, movie, hall } = req.body;
-    const seats = createSeatForShow(hall);
+    const seats = await createSeatForShow(hall);
     const newShow = new Show({
       startTime: startTime,
       endTime: endTime,

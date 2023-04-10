@@ -11,6 +11,7 @@ export const createSeat = (row, column, type) => {
 };
 
 export const createSeatForShow = async (hallID) => {
+  console.log("Hello");
   const hall = await Hall.findById(hallID);
   const numberRow = hall.numberRow;
   const numberColumn = hall.numberColumn;

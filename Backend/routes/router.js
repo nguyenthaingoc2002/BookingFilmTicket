@@ -2,7 +2,10 @@ import authRoute from "./authRoute.js";
 import movieRoute from "./movieRoute.js";
 import hallRoute from "./hallRoute.js";
 import showRoute from "./showRoute.js";
-import bookingRoute from "./bookingRoute.js"
+import bookingRoute from "./bookingRoute.js";
+import paymentRoute from "./paymentRoute.js";
+import ratingRoute from "./ratingRoute.js";
+import userRoute from "./userRoute.js";
 import express from "express";
 const router = express.Router();
 
@@ -11,4 +14,7 @@ router.use("/movie", movieRoute);
 router.use("/hall", hallRoute);
 router.use("/show", showRoute);
 router.use("/booking", bookingRoute);
+router.use("/payment", paymentRoute);
+router.use("/rating", ratingRoute);
+router.use("/user", userRoute);
 export default router;

@@ -14,11 +14,11 @@ const BookingSchema = new mongoose.Schema(
       required: true,
       ref: "Show",
     },
-    seat: {
+    seats: [{
       type: mongoose.Schema.Types.ObjectId,
       required: true,
       ref: "Seat",
-    },
+    }],
     amount: {
       type: Number,
       require: true,
