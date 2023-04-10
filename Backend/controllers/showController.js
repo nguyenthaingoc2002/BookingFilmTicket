@@ -87,6 +87,19 @@ export const getShowByDateAndMovie = async (req, res) => {
   }
 };
 
+export const getAllShow = async (req, res) => {
+  try {
+    const listShow = await Show.find();
+    res.status(200).json({
+      success: true,
+      msg: "Find All Show Success",
+      listShow: listShow,
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
 export const deleteShow = async (req, res) => {
   try {
     const show = await Show.findById(req.params.showID);
