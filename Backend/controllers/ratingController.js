@@ -23,7 +23,7 @@ export const createRating = async (req, res) => {
 
 export const getRatingByMovieID = async (req, res) => {
   try {
-    const listRating = await Rating.find({ movie: req.params.movieID });
+    const listRating = await Rating.find({ movie: req.params.movieID }).populate('user');
     res.status(200).json({
       success: true,
       msg: "Find All Rating By Movie ID Success",

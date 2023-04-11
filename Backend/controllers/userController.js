@@ -2,7 +2,7 @@ import User from "../models/UserModel.js";
 import bcrypt from "bcrypt";
 export const getUser = async (req, res) => {
   try {
-    const user = await User.findById(req.params.userID);
+    const user = await User.findById(req.user.id);
     res.status(200).json({
       success: true,
       msg: "Find User Success",

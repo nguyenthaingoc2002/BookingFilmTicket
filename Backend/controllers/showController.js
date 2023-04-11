@@ -28,7 +28,7 @@ export const createShow = async (req, res) => {
 
 export const getShowByShowID = async (req, res) => {
   try {
-    const show = await Show.findById(req.params.showID);
+    const show = await Show.findById(req.params.showID).populate('movie').populate('hall').populate('seats');
     res.status(200).json({
       success: true,
       msg: "Find Show Success",
@@ -41,7 +41,7 @@ export const getShowByShowID = async (req, res) => {
 
 export const getShowByMovieID = async (req, res) => {
   try {
-    const listShow = await Show.find({ movie: req.params.movieID });
+    const listShow = await Show.find({ movie: req.params.movieID }).populate('movie').populate('hall').populate('seats');
     res.status(200).json({
       success: true,
       msg: "Find Show Success",
@@ -57,7 +57,7 @@ export const getShowByDate = async (req, res) => {
     const from = new Date(req.params.Date);
     const to = new Date(req.params.Date);
     to.setDate(from.getDate() + 1);
-    const listShow = await Show.find({ startTime: { $gte: from, $lte: to } });
+    const listShow = await Show.find({ startTime: { $gte: from, $lte: to } }).populate('movie').populate('hall').populate('seats');
     res.status(200).json({
       success: true,
       msg: "Find Show Success",
@@ -76,7 +76,7 @@ export const getShowByDateAndMovie = async (req, res) => {
     const listShow = await Show.find({
       startTime: { $gte: from, $lte: to },
       movie: req.params.movieID,
-    });
+    }).populate('movie').populate('hall').populate('seats');
     res.status(200).json({
       success: true,
       msg: "Find Show Success",
@@ -89,7 +89,7 @@ export const getShowByDateAndMovie = async (req, res) => {
 
 export const getAllShow = async (req, res) => {
   try {
-    const listShow = await Show.find();
+    const listShow = await Show.find().populate('movie').populate('hall').populate('seats');
     res.status(200).json({
       success: true,
       msg: "Find All Show Success",

@@ -29,7 +29,7 @@ export const createBooking = async (req, res) => {
 
 export const getBookingByUser = async (req, res) => {
   try {
-    const listBooking = await Booking.find({user: req.user.id});
+    const listBooking = await Booking.find({user: req.user.id}).populate('show').populate('seats');
     res.status(200).json({
       success: true,
       msg: "getBookingByUser Success",
