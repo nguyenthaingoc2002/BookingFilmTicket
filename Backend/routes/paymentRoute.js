@@ -73,7 +73,7 @@ router.post("/create_payment_url", function (req, res) {
 
   createPayment(orderId, createDate);
 
-  res.status(500).json({
+  res.status(200).json({
     success: true,
     vnpUrl: vnpUrl,
   });
