@@ -9,6 +9,7 @@ export const createPayment = async (
     vnp_TransactionDate: vnp_TransactionDate,
   });
   await payment.save();
+  return payment;
 };
 
 export const updatePayment = async (id, data) => {

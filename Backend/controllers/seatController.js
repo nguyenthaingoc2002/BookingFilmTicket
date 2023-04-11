@@ -1,5 +1,6 @@
 import Seat from "../models/SeatModel.js";
 import Hall from "../models/HallModel.js";
+import Show from "../models/ShowModel.js";
 
 export const createSeat = (row, column, type) => {
   const newSeat = new Seat({
@@ -50,4 +51,20 @@ export const updateStateSeat = async (seatID, state) => {
 
 export const deleteSeat = async (seatID) => {
   await Seat.findByIdAndDelete(seatID);
+}
+
+export const findSeatID = async (req, res) => {
+  try {
+  const {row, column, showID} = req.body;
+  const show = await Show.findById(showID);
+  const hall = await Hall.findById(show.hall);
+  const seatID = show.seats[(row -1) * hall.numberColumn + column - 1];
+  res.status(200).json({
+    success: true,
+    msg: "Find Seat ID Success",
+    seatID: seatID,
+  });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 }

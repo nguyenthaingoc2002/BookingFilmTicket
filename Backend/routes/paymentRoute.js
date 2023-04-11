@@ -8,6 +8,7 @@ import {
 } from "../controllers/paymentController.js";
 import Payment from "../models/PaymentModel.js";
 import axios from "axios";
+import { createBooking } from "../controllers/bookingController.js";
 const { createHmac } = await import("node:crypto");
 
 function sortObject(obj) {
@@ -26,9 +27,9 @@ function sortObject(obj) {
   return sorted;
 }
 
-router.post("/create_payment_url", function (req, res) {
+router.post("/create_payment_url", async function (req, res) {
   process.env.TZ = "Asia/Ho_Chi_Minh";
-  const { amount } = req.body;
+  const {showID, seats, amount, userID} = req.body;
   let date = new Date();
   let createDate = moment(date).format("YYYYMMDDHHmmss");
 
@@ -70,9 +71,9 @@ router.post("/create_payment_url", function (req, res) {
   let signed = hmac.update(new Buffer(signData, "utf-8")).digest("hex");
   vnp_Params["vnp_SecureHash"] = signed;
   vnpUrl += "?" + querystring.stringify(vnp_Params, { encode: false });
-
-  createPayment(orderId, createDate);
-
+  
+  const payment = await createPayment(orderId, createDate);
+  await createBooking(showID, seats, amount, payment.id, userID);
   res.status(200).json({
     success: true,
     vnpUrl: vnpUrl,
@@ -101,7 +102,7 @@ router.get("/vnpay_return", async function (req, res, next) {
     let vnp_TxnRef = vnp_Params["vnp_TxnRef"];
     const payment = await Payment.findOne({ vnp_TxnRef: vnp_TxnRef });
     await updatePayment(payment.id, { state: 1 });
-    res.json({ success: true, payment_id: payment.id });
+    res.redirect("http://localhost:3000");
   } else {
     res.json({ success: false });
   }
