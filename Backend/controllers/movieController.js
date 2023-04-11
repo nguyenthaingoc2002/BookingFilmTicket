@@ -14,7 +14,7 @@ export const createMovie = async (req, res) => {
       url_image: url_image,
       url_trailer: url_trailer,
     });
-    newMovie.save();
+    await newMovie.save();
     res.status(200).json({
       success: true,
       msg: "Create Movie Success",

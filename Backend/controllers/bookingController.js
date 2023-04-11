@@ -10,7 +10,8 @@ export const createBooking = async (req, res) => {
       seats: seats,
       amount: amount,
     });
-    newBooking.save();
+    await newBooking.save();
+    const booking = await Booking.findById(newBooking.id).populate('show').populate('seats').populate('user')
     for(let seatID of seats) {
       if(!checkAvailableSeat(seatID)) {
         res.status(500).json("Seat is not available");
@@ -20,7 +21,7 @@ export const createBooking = async (req, res) => {
     res.status(200).json({
       success: true,
       msg: "Create Booking Success",
-      booking: newBooking,
+      newBooking: booking,
     });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -29,7 +30,7 @@ export const createBooking = async (req, res) => {
 
 export const getBookingByUser = async (req, res) => {
   try {
-    const listBooking = await Booking.find({user: req.user.id}).populate('show').populate('seats');
+    const listBooking = await Booking.find({user: req.user.id}).populate('show').populate('seats').populate('user');
     res.status(200).json({
       success: true,
       msg: "getBookingByUser Success",

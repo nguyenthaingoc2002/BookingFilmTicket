@@ -15,11 +15,12 @@ export const createShow = async (req, res) => {
       hall: hall,
       seats: seats,
     });
-    newShow.save();
+    await newShow.save();
+    const show = await Show.findById(newShow.id).populate('movie').populate('hall').populate('seats');
     res.status(200).json({
       success: true,
       msg: "Create Show Success",
-      show: newShow,
+      newShow: show,
     });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -119,7 +120,7 @@ export const deleteShow = async (req, res) => {
 export const updateShow = async (req, res) => {
   try {
     await Show.findByIdAndUpdate(req.params.showID, {$set: req.body});
-    const updatedShow = Show.findById(req.params.showID);
+    const updatedShow = Show.findById(req.params.showID).populate('movie').populate('hall').populate('seats');
     res.status(200).json({
       success: true,
       msg: "Update Show Success",

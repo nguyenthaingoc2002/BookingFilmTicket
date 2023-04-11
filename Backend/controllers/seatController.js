@@ -11,7 +11,6 @@ export const createSeat = (row, column, type) => {
 };
 
 export const createSeatForShow = async (hallID) => {
-  console.log("Hello");
   const hall = await Hall.findById(hallID);
   const numberRow = hall.numberRow;
   const numberColumn = hall.numberColumn;
@@ -31,7 +30,7 @@ export const createSeatForShow = async (hallID) => {
         column: y,
         type: type,
       });
-      seat.save();
+      await seat.save();
       seats.push(seat);
     }
   }
@@ -46,7 +45,7 @@ export const checkAvailableSeat = async (seatID) => {
 export const updateStateSeat = async (seatID, state) => {
   const seat = await Seat.findById(seatID);
   seat.state = state;
-  seat.save();
+  await seat.save();
 };
 
 export const deleteSeat = async (seatID) => {

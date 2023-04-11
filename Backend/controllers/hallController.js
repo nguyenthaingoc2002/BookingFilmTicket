@@ -9,7 +9,7 @@ export const createHall = async (req, res) => {
         numberRow,
         type
     });
-    newHall.save();
+    await newHall.save();
     res.status(200).json({
       success: true,
       msg: "Create Hall Success",

@@ -10,11 +10,12 @@ export const createRating = async (req, res) => {
       comment: comment,
       movie: movie,
     });
-    newRating.save();
+    await newRating.save();
+    const rating = await Rating.findById(newRating.id).populate('user').populate('movie');
     res.status(200).json({
       success: true,
       msg: "Create Rating Success",
-      newRating: newRating,
+      newRating: rating,
     });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -23,7 +24,7 @@ export const createRating = async (req, res) => {
 
 export const getRatingByMovieID = async (req, res) => {
   try {
-    const listRating = await Rating.find({ movie: req.params.movieID }).populate('user');
+    const listRating = await Rating.find({ movie: req.params.movieID }).populate('user').populate('movie');
     res.status(200).json({
       success: true,
       msg: "Find All Rating By Movie ID Success",
