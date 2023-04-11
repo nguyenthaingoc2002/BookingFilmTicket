@@ -2,16 +2,17 @@ import Booking from "../models/bookingModel.js";
 import {checkAvailableSeat, updateStateSeat} from "./seatController.js"
 export const createBooking = async (req, res) => {
   try {
-    const { showID, seats, amount } = req.body;
+    const { showID, seats, amount, payment } = req.body;
     const userID = req.user.id;
     const newBooking = new Booking({
       user: userID,
       show: showID,
       seats: seats,
       amount: amount,
+      payment: payment
     });
     await newBooking.save();
-    const booking = await Booking.findById(newBooking.id).populate('show').populate('seats').populate('user')
+    const booking = await Booking.findById(newBooking.id).populate('show').populate('seats').populate('user').populate('payment')
     for(let seatID of seats) {
       if(!checkAvailableSeat(seatID)) {
         res.status(500).json("Seat is not available");
@@ -30,7 +31,7 @@ export const createBooking = async (req, res) => {
 
 export const getBookingByUser = async (req, res) => {
   try {
-    const listBooking = await Booking.find({user: req.user.id}).populate('show').populate('seats').populate('user');
+    const listBooking = await Booking.find({user: req.user.id}).populate('show').populate('seats').populate('user').populate('payment');
     res.status(200).json({
       success: true,
       msg: "getBookingByUser Success",
