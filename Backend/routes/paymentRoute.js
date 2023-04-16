@@ -8,7 +8,10 @@ import {
 } from "../controllers/paymentController.js";
 import Payment from "../models/PaymentModel.js";
 import axios from "axios";
-import { createBooking } from "../controllers/bookingController.js";
+import {
+  cancelBooking,
+  createBooking,
+} from "../controllers/bookingController.js";
 const { createHmac } = await import("node:crypto");
 
 function sortObject(obj) {
@@ -29,7 +32,7 @@ function sortObject(obj) {
 
 router.post("/create_payment_url", async function (req, res) {
   process.env.TZ = "Asia/Ho_Chi_Minh";
-  const {showID, seats, amount, userID} = req.body;
+  const { showID, seats, amount, userID } = req.body;
   let date = new Date();
   let createDate = moment(date).format("YYYYMMDDHHmmss");
 
@@ -71,7 +74,7 @@ router.post("/create_payment_url", async function (req, res) {
   let signed = hmac.update(new Buffer(signData, "utf-8")).digest("hex");
   vnp_Params["vnp_SecureHash"] = signed;
   vnpUrl += "?" + querystring.stringify(vnp_Params, { encode: false });
-  
+
   const payment = await createPayment(orderId, createDate);
   await createBooking(showID, seats, amount, payment.id, userID);
   res.status(200).json({
@@ -102,7 +105,7 @@ router.get("/vnpay_return", async function (req, res, next) {
     let vnp_TxnRef = vnp_Params["vnp_TxnRef"];
     const payment = await Payment.findOne({ vnp_TxnRef: vnp_TxnRef });
     await updatePayment(payment.id, { state: 1 });
-    res.redirect("http://localhost:3000");
+    res.redirect("http://localhost:3000/success");
   } else {
     res.json({ success: false });
   }
@@ -110,7 +113,7 @@ router.get("/vnpay_return", async function (req, res, next) {
 
 router.post("/refund", async function (req, res, next) {
   process.env.TZ = "Asia/Ho_Chi_Minh";
-
+  let bookingID = req.body.bookingID;
   let vnp_TmnCode = "OC3SMDIU";
   let secretKey = "UJFGOSLYGXIUGXKFJBKIRMLWSNCMNTFZ";
   let vnp_Api = "https://sandbox.vnpayment.vn/merchant_webapi/api/transaction";
@@ -185,17 +188,18 @@ router.post("/refund", async function (req, res, next) {
     vnp_SecureHash: vnp_SecureHash,
   };
 
-    const response = await axios.post(`${vnp_Api}`, dataObj);
-    const payment = await Payment.findOne({ vnp_TxnRef: vnp_TxnRef });
-    await updatePayment(payment.id, { state: 2 });
-    if(response.data.vnp_ResponseCode == "00") {
-        res.status(200).json({
-            success: true,
-            msg: "refund success"
-        })
-    } else {
-        res.status(400).json({ msg: "Refund fail" });
-    }
+  const response = await axios.post(`${vnp_Api}`, dataObj);
+  const payment = await Payment.findOne({ vnp_TxnRef: vnp_TxnRef });
+  await updatePayment(payment.id, { state: 2 });
+  if (response.data.vnp_ResponseCode == "00") {
+    await cancelBooking(bookingID);
+    res.status(200).json({
+      success: true,
+      msg: "refund success",
+    });
+  } else {
+    res.status(400).json({ msg: "Refund fail" });
+  }
 });
 
 export default router;

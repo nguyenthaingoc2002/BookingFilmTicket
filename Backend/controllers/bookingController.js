@@ -1,22 +1,38 @@
 import Booking from "../models/bookingModel.js";
-import {checkAvailableSeat, updateStateSeat} from "./seatController.js"
+import { checkAvailableSeat, updateStateSeat } from "./seatController.js";
 export const createBooking = async (showID, seats, amount, payment, userID) => {
-    const newBooking = new Booking({
-      user: userID,
-      show: showID,
-      seats: seats,
-      amount: amount,
-      payment: payment
-    });
-    await newBooking.save();
-    for(let seatID of seats) {
-      updateStateSeat(seatID, true);
-    }
+  const newBooking = new Booking({
+    user: userID,
+    show: showID,
+    seats: seats,
+    amount: amount,
+    payment: payment,
+  });
+  await newBooking.save();
+  for (let seatID of seats) {
+    updateStateSeat(seatID, true);
+  }
 };
 
 export const getBookingByUser = async (req, res) => {
   try {
-    const listBooking = await Booking.find({user: req.user.id}).populate('show').populate('seats').populate('user').populate('payment');
+    const listBooking = await Booking.find({ user: req.user.id })
+      .populate({
+        path: "show",
+        populate: {
+          path: "movie",
+          model: "Movie",
+        },
+      }).populate({
+        path: "show",
+        populate: {
+          path: "hall",
+          model: "Hall",
+        },
+      })
+      .populate("seats")
+      .populate("user")
+      .populate("payment");
     res.status(200).json({
       success: true,
       msg: "getBookingByUser Success",
@@ -30,7 +46,7 @@ export const getBookingByUser = async (req, res) => {
 export const deleteBooking = async (req, res) => {
   try {
     const booking = await Booking.findById(req.params.bookingID);
-    for(let seatID of booking.seats) {
+    for (let seatID of booking.seats) {
       updateStateSeat(seatID, false);
     }
     await Booking.findByIdAndDelete(req.params.bookingID);
@@ -41,4 +57,13 @@ export const deleteBooking = async (req, res) => {
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
+};
+
+export const cancelBooking = async (bookingID) => {
+  const booking = await Booking.findById(bookingID);
+  for (let seatID of booking.seats) {
+    await updateStateSeat(seatID, false);
+  }
+  booking.isCancel = true;
+  await booking.save();
 };

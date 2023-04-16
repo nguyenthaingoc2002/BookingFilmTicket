@@ -39,9 +39,9 @@ export const createSeatForShow = async (hallID) => {
 };
 export const checkAvailableSeat = async (seatID) => {
   const seat = await Seat.findById(seatID);
-  if(seat.state) return true;
+  if (seat.state) return true;
   else return false;
-}
+};
 
 export const updateStateSeat = async (seatID, state) => {
   const seat = await Seat.findById(seatID);
@@ -51,20 +51,21 @@ export const updateStateSeat = async (seatID, state) => {
 
 export const deleteSeat = async (seatID) => {
   await Seat.findByIdAndDelete(seatID);
-}
+};
 
 export const findSeatID = async (req, res) => {
   try {
-  const {row, column, showID} = req.body;
-  const show = await Show.findById(showID);
-  const hall = await Hall.findById(show.hall);
-  const seatID = show.seats[(row -1) * hall.numberColumn + column - 1];
-  res.status(200).json({
-    success: true,
-    msg: "Find Seat ID Success",
-    seatID: seatID,
-  });
+    const { row, column, showID } = req.body;
+    const show = await Show.findById(showID);
+    const hall = await Hall.findById(show.hall);
+    const vitri = (row - 1) * hall.numberColumn + column - 1;
+    const seatID = show.seats[vitri];
+    res.status(200).json({
+      success: true,
+      msg: "Find Seat ID Success",
+      seatID: seatID,
+    });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
-}
+};

@@ -14,11 +14,13 @@ const BookingSchema = new mongoose.Schema(
       required: true,
       ref: "Show",
     },
-    seats: [{
-      type: mongoose.Schema.Types.ObjectId,
-      required: true,
-      ref: "Seat",
-    }],
+    seats: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
+        ref: "Seat",
+      },
+    ],
     amount: {
       type: Number,
       require: true,
@@ -27,7 +29,12 @@ const BookingSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       required: true,
       ref: "Payment",
-    }
+    },
+    isCancel: {
+      type: Boolean,
+      require: true,
+      default: false,
+    },
   },
   { timestamps: true }
 );
