@@ -120,7 +120,7 @@ export const deleteShow = async (req, res) => {
 export const updateShow = async (req, res) => {
   try {
     await Show.findByIdAndUpdate(req.params.showID, {$set: req.body});
-    const updatedShow = Show.findById(req.params.showID).populate('movie').populate('hall').populate('seats');
+    const updatedShow = await Show.findById(req.params.showID).populate('movie').populate('hall').populate('seats');
     res.status(200).json({
       success: true,
       msg: "Update Show Success",
